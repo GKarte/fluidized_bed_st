@@ -12,7 +12,7 @@ import pandas as pd
 from io import BytesIO
 
 # pd.options.display.precision = 2
-
+sdfdsf
 def scaling(bed_cm, fluid_cm, criteria="Umf", ratio=2):
     fullGlicks = FB.downscale_glicksmanFull(fluid_cm)
     simpleGlicks = FB.downscale_glicksmanSimpl(fluid_cm, 1/ratio)
