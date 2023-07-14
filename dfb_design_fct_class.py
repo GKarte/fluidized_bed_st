@@ -549,7 +549,7 @@ def sys_eps_mf_ergun(x, *parameter): # Kaiser 2003
     return [eps_mf**3 + eps_mf*K1 - K2]
 
 def createGrace(title="no"):
-    grace_png = plt.imread(f'{path}\pics\grace_schmid.png') # read in grace diagram as png
+    grace_png = plt.imread(f'{path}/pics/grace_schmid.png') # read in grace diagram as png
     fig, ax = plt.subplots(1, 1, figsize=(6,7.2), dpi=100)
     fig.tight_layout(pad=0.5)
     xmin, xmax, ymin, ymax = 0.5, 100, 0.005, 20
