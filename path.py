@@ -1,1 +1,1 @@
-path = "GKarte/fluidized_bed_st"
+path = "fluidized_bed_st"
