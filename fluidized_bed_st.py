@@ -134,7 +134,7 @@ with tab2:
     
 with tab3:
     h_bed = st.number_input(label="bed height in fluidized state / m", value=0.2)
-    eps_bed = st.number_input(label="porosity in fluidized state (estimated value) / m", value=FB.eps_bed())
+    eps_bed = st.number_input(label="porosity in fluidized state (estimated value) / -", value=FB.eps_bed())
     dp_bed = FB.dp_bed(h_bed, eps_bed)[0]
     dp_bot = FB.dp_bottom(h_bed, dp_bed=dp_bed)
     st.write(f"""
