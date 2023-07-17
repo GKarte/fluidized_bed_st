@@ -135,7 +135,7 @@ with tab2:
 with tab3:
     h_bed = st.number_input(label="bed height in fluidized state / m", value=0.2)
     eps_bed = st.number_input(label="porosity in fluidized state (estimated value) / m", value=FB.eps_bed())
-    dp_bed = FB.dp_bed(h_bed)[0]
+    dp_bed = FB.dp_bed(h_bed, eps_bed)[0]
     dp_bot = FB.dp_bottom(h_bed, dp_bed=dp_bed)
     st.write(f"""
              Bed: $\Delta p$ = {dp_bed:.4} Pa\n
@@ -158,7 +158,7 @@ with tab4:
         T_cm = st.number_input(label="cold temperature / °C", value=20.)
     
     st.markdown("**Scaling settings**")
-    ratio = st.number_input(label="Geometric ratio", value=2)
+    ratio = st.number_input(label="Geometric ratio", value=2.)
     criteria = st.selectbox("Scaling parameter", ("Umf", "Ut", "Use", "Uc","Re_p", "Fr_p"), key="crit")
     
     fluid_cm = FluidState(subst=subst_cm, T=T_cm , p=p_cm)
