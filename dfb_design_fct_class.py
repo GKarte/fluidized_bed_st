@@ -12,6 +12,7 @@ import CoolProp.CoolProp as CP # he1 = CP.PropsSI("H", "P", p, "T", data["Te1"][
 from CoolProp.HumidAirProp import HAPropsSI
 from dataclasses import dataclass
 from scipy.optimize import fsolve, minimize_scalar
+# from CoolProp.HumidAirProp import HAPropsSI
 
 # constants
 g = 9.806 # gravitational acceleration
@@ -110,11 +111,10 @@ class FluidizedBed():
           self.bed = bed
           self.fluid = fluid
           props = FluidBedProperties(bed, fluid)
-          self.Ar, self.Re_mf, self.U_mf, self.Re_se, self.U_se, self.Re_c_av, self.U_c_av, self.DR, self.d_p_star = props
+          self.Ar, self.Re_mf, self.U_mf, self.Re_se, self.U_se, self.Re_c_av, self.U_c_av, self.DR, self.d_p_star, self.U_t = props
           undefined = 15
           self.U_to_Use, self.U_to_Uc, self.m_dot, self.Vn_dot, self.U_to_Umf, self.Re_p, self.U_star, self.A, self.Fr_D, self.Fr_p, self.U, self.D, self.h, self.A_q, self.V_dot = [None]*undefined
           self.est_eps_mf_ergun()
-          self.U_t = TerminalVelocity(bed, fluid)
           
       def est_eps_mf_ergun(self):
           x0 = [0.4]
@@ -274,6 +274,10 @@ class FluidizedBed():
       
       def Vn_p_corr(self, p_corr):
           return V_to_Vn(self.Vn_dot, 0, p_corr)
+      
+      def Ut_theory(self):
+          Ut_th = TerminalVelocity(self.bed, self.fluid)
+          return Ut_th
           
       def downscale_glicksmanSimpl(self, fluid_cm, ratio):
           """
@@ -469,7 +473,9 @@ def FluidBedProperties(bed, fluid):
     U_c_av =     Re_c_av*fluid.nu / bed.d_sv # U min. fluid.
     DR =         (bed.rho-fluid.rho)/fluid.rho # density ratio
     d_p_star =   Ar**(1/3) # d_p_star
-    return Ar, Re_mf, U_mf, Re_se, U_se, Re_c_av, U_c_av, DR, d_p_star
+    Re_t =       (18/d_p_star**2 + (2.335-1.744*0.95)/d_p_star**0.5) ** (-1) * d_p_star
+    U_t =        Re_t*fluid.nu / bed.d_sv # U t
+    return Ar, Re_mf, U_mf, Re_se, U_se, Re_c_av, U_c_av, DR, d_p_star, U_t
 
 def TerminalVelocity(bed, fluid):
     U_lam = (bed.rho-fluid.rho)*bed.d_sv**2*g / (18*fluid.nu*fluid.rho)
@@ -548,7 +554,7 @@ def sys_eps_mf_ergun(x, *parameter): # Kaiser 2003
     return [eps_mf**3 + eps_mf*K1 - K2]
 
 def createGrace(title="no"):
-    grace_png = plt.imread('grace_schmid.png') # read in grace diagram as png
+    grace_png = plt.imread('pics\grace_schmid.png') # read in grace diagram as png
     fig, ax = plt.subplots(1, 1, figsize=(6,7.2), dpi=100)
     fig.tight_layout(pad=0.5)
     xmin, xmax, ymin, ymax = 0.5, 100, 0.005, 20
