@@ -115,6 +115,7 @@ with tab1:
         fig, ax = createGrace()
         FB.grace(ax, "Operating point", "o", "blue")
         st.pyplot(fig)
+        st.markdown("Diagram taken from: Schmid, J. C. (2014). Development of a novel dual fluidized bed gasification system for increased fuel flexibility [Dissertation, Technische Universität Wien]. reposiTUm. https://doi.org/10.34726/hss.2014.25397")
 
 with tab2:
     style_dict1 = {"FB":"{:.2e}"}
