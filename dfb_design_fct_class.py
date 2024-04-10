@@ -304,7 +304,7 @@ class FluidizedBed():
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
           # print(df)
-          df["ratio"] = df["hot"]/df["cold"]          
+          df["ratio"] = df["cold"]/df["hot"]          
           return obj, df
       
       def downscale_glicksmanFull(self, fluid_cm):
@@ -331,7 +331,7 @@ class FluidizedBed():
           df_cold = obj.createTable()
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
-          df["ratio"] = df["hot"]/df["cold"]          
+          df["ratio"] = df["cold"]/df["hot"]          
           return obj, df
       
       def downscale_marx(self, fluid_cm, rho_p_cm, Phi_cm, ratio): # marx diss
@@ -356,7 +356,7 @@ class FluidizedBed():
           df_cold = obj.createTable()
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
-          df["ratio"] = df["hot"]/df["cold"]            
+          df["ratio"] = df["cold"]/df["hot"]            
           return obj, df
       
       def downscale_detU(self, fluid_cm, bed_cm, ratio, param="Fr_p"): # proell paper
@@ -396,7 +396,7 @@ class FluidizedBed():
           df_cold = obj.createTable()
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
-          df["ratio"] = df["hot"]/df["cold"]            
+          df["ratio"] = df["cold"]/df["hot"]            
           return obj, df
       
       def downscale_set(self, fluid_cm, bed_cm, ratio, Vn_dot):
@@ -417,7 +417,7 @@ class FluidizedBed():
           df_cold = obj.createTable()
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
-          df["ratio"] = df["hot"]/df["cold"]            
+          df["ratio"] = df["cold"]/df["hot"]            
           return obj, df
       
            
@@ -471,7 +471,7 @@ def FluidBedProperties(bed, fluid):
     U_se =       Re_se*fluid.nu / bed.d_sv # U min. fluid.
     Re_c_av =    Ar**(19/30) / (0.85+0.85*Ar**(1/5))
     U_c_av =     Re_c_av*fluid.nu / bed.d_sv # U min. fluid.
-    DR =         (bed.rho-fluid.rho)/fluid.rho # density ratio
+    DR =         bed.rho/fluid.rho # density ratio
     d_p_star =   Ar**(1/3) # d_p_star
     Re_t =       (18/d_p_star**2 + (2.335-1.744*0.95)/d_p_star**0.5) ** (-1) * d_p_star
     U_t =        Re_t*fluid.nu / bed.d_sv # U t
