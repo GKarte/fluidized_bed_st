@@ -471,10 +471,9 @@ def FluidBedProperties(bed, fluid):
     U_se =       Re_se*fluid.nu / bed.d_sv # U min. fluid.
     Re_c_av =    Ar**(19/30) / (0.85+0.85*Ar**(1/5))
     U_c_av =     Re_c_av*fluid.nu / bed.d_sv # U min. fluid.
-    DR =         bed.rho/fluid.rho # density ratio
+    DR =         (bed.rho-fluid.rho)/fluid.rho # density ratio
     d_p_star =   Ar**(1/3) # d_p_star
-    Re_t =       (18/d_p_star**2 + (2.335-1.744*0.95)/d_p_star**0.5) ** (-1) * d_p_star
-    U_t =        Re_t*fluid.nu / bed.d_sv # U t
+    U_t = TerminalVelocity(bed, fluid)
     return Ar, Re_mf, U_mf, Re_se, U_se, Re_c_av, U_c_av, DR, d_p_star, U_t
 
 def TerminalVelocity(bed, fluid):
@@ -489,12 +488,18 @@ def TerminalVelocity(bed, fluid):
     elif Re_turb >= 1000:
         U_t = U_turb
     else:
+        Ar =         Archimedes(bed.d_sv,bed.rho,fluid.rho,fluid.nu)
+        d_p_star =   Ar**(1/3) # d_p_star
+        Re_t_guess =       (18/d_p_star**2 + (2.335-1.744*0.95)/d_p_star**0.5) ** (-1) * d_p_star # guess
+        U_t_guess =        Re_t_guess*fluid.nu / bed.d_sv # guess
+        C_w_guess = (24/Re_t_guess + 4/np.sqrt(Re_t_guess) + 0.4) # guess
         param_trans = (bed.d_sv, fluid.nu, bed.rho, fluid.rho)
-        # x0 = [3, 10, 2]
-        x0 = [(Re_lam+Re_turb)/2, 8, 2]
+        # x0 = [(Re_lam+Re_turb)/2, 8, 2]
+        x0 = [Re_t_guess, C_w_guess, U_t_guess]
+        print(x0)
         Re_trans, C_w_trans, U_trans = fsolve(sys_U_t_trans, x0, args=param_trans)
         U_t = U_trans
-        # print(Re_trans,C_w_trans, U_trans)
+        print(Re_trans,C_w_trans, U_trans)
     return U_t
 
 def sys_U_t_trans(x, *parameter):
