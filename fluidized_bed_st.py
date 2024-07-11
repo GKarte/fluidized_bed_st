@@ -196,7 +196,7 @@ with tab3:
     dp_rel = 0.01 + 0.2*( 1 - np.exp(-d_rel) )
     fig_dp_bottom, ax_dp_bottom = create_plot(figsize=(6, 5), dpi=200, x_range=(0,10), y_range=(0,0.25), x_label="$D/(2H)$", y_label="$dp_{bottom}/dp_{bed}$")
     ax_dp_bottom.plot(d_rel,dp_rel)
-    ax_dp_bottom.plot([d_rel_op],[dp_rel_op])
+    ax_dp_bottom.scatter([d_rel_op],[dp_rel_op])
     st.pyplot(fig_dp_bottom)
              
 with tab4:  
