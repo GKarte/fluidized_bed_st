@@ -9,7 +9,38 @@ import streamlit as st
 from dfb_design_fct_class import BedMaterial, FluidState, FluidizedBed, createGrace, pg_prop_T
 import general_functions as gf
 import pandas as pd
+import numpy as np
 from io import BytesIO
+from matplotlib import pyplot as plt
+import scienceplots
+
+plt.style.use(['science','vibrant', 'no-latex'])
+
+
+def create_plot(figsize=(6, 5), dpi=200, x_range=(0,1), y_range=(0,1), x_label="x", y_label="y", second_ax=False, y2_range=None, y2_label="y2", title=None, grid=True, grid_fine=True):
+    fig, ax = plt.subplots(1, 1, figsize=figsize, dpi=dpi)
+    fig.tight_layout()
+    xmin, xmax = x_range
+    ymin, ymax = y_range
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if grid:
+        ax.grid()
+    if grid_fine:
+        ax.grid(which='minor', color='lightgray', linestyle=':', linewidth=0.5)
+        ax.minorticks_on()
+    if title:
+        ax.set_title(title)
+    if second_ax:
+        ax2 = ax.twinx()
+        y2min, y2max = y2_range
+        ax2.set_ylim(y2min, y2max)
+        ax2.set_ylabel(y2_label)
+        return fig, (ax, ax2)
+    else:
+        return fig, ax
 
 # pd.options.display.precision = 2
 
@@ -33,6 +64,24 @@ def scaling(bed_cm, fluid_cm, criteria="Umf", ratio=2):
     ax_cm.legend(loc="upper right")
     
     return df_cm, fig_cm
+
+
+def createEpsDiagram():
+    fig, ax = create_plot(figsize=(6, 5), dpi=200, x_range=(0,40), y_range=(0,1), x_label="$U/U_{mf}$", y_label="$\epsilon$")
+    FB_dummy = initialize_FB(bed, fluid, geom_val, OP_val)
+    eps_list = []
+    U_list = list(np.linspace(FB_dummy.U_mf, FB_dummy.U_mf*50, 51))
+    for U in U_list:
+        FB_dummy.set_U(U)
+        eps_list.append(FB_dummy.eps_bed())
+    eps_list.insert(0, eps_list[0])
+    U_list.insert(0, 0)
+    U_ar = np.array(U_list)
+    ax.plot(U_ar/FB_dummy.U_mf, eps_list, label="$\epsilon$")
+    ax.legend()
+    return fig, ax
+        
+    
 
 def initialize_FB(bed, fluid, geom_val, OP_val):
     FB = FluidizedBed(bed, fluid)
@@ -108,7 +157,7 @@ bed = BedMaterial(d_p=dp, rho=rho_s, Phi=Phi)
 FB = initialize_FB(bed, fluid, geom_val, OP_val)
 
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Grace", "Summary", "Pressure drop", "Scaling", "Particle boundaries"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Grace", "Summary", "Pressure drop", "Scaling", "Particle boundaries", "Diagrams"])
 
 with tab1:
     if st.button("Create Grace diagram"):
@@ -135,7 +184,7 @@ with tab2:
     
 with tab3:
     h_bed = st.number_input(label="bed height in fluidized state / m", value=0.2)
-    eps_bed = st.number_input(label="porosity in fluidized state (estimated value) / -", value=FB.eps_bed())
+    eps_bed = st.number_input(label="porosity in fluidized state (estimated value based on set U/Umf) / -", value=FB.eps_bed())
     dp_bed = FB.dp_bed(h_bed, eps_bed)[0]
     dp_bot = FB.dp_bottom(h_bed, dp_bed=dp_bed)
     st.write(f"""
@@ -191,7 +240,14 @@ with tab5:
             st.write(f"d_sv_min = {dmin*10**6:.0f} * 10^-6 m (smaller particles get entrained)")
             st.write(f"d_sv_max = {dmax*10**6:.0f} * 10^-6 m (bigger particles aren't fluidized)")
         except:
-            st.write("Berechnung gescheitert")
+            st.write("Calculation not successful")
+            
+            
+with tab6:
+    if st.button("Create diagrams"):
+        st.write("Porosity as function of U/Umf:")
+        fig_eps, ax_eps = createEpsDiagram()
+        st.pyplot(fig_eps)
         
 
         
