@@ -190,11 +190,13 @@ with tab3:
              Pressure drop ratio (bottom/bed): {dp_bot/dp_bed*100:.4} %\n
              $\epsilon$ = {eps_bed:.4}
              """)
-    d_rel = np.arange(0, 5, 0.2)
-    # dp_rel = 0.01 + 0.2*( 1 - np.exp(-self.D/(2*h_bed)) )
+    d_rel_op = FB.D/(2*h_bed)
+    dp_rel_op = 0.01 + 0.2*( 1 - np.exp(-d_rel_op) )
+    d_rel = np.arange(0, 10, 0.2)
     dp_rel = 0.01 + 0.2*( 1 - np.exp(-d_rel) )
-    fig_dp_bottom, ax_dp_bottom = create_plot(figsize=(6, 5), dpi=200, x_range=(0,10), y_range=(0,1), x_label="$D/(2H)$", y_label="$dp_{bottom}/dp_{bed}$")
+    fig_dp_bottom, ax_dp_bottom = create_plot(figsize=(6, 5), dpi=200, x_range=(0,10), y_range=(0,0.25), x_label="$D/(2H)$", y_label="$dp_{bottom}/dp_{bed}$")
     ax_dp_bottom.plot(d_rel,dp_rel)
+    ax_dp_bottom.plot([d_rel_op],[dp_rel_op])
     st.pyplot(fig_dp_bottom)
              
 with tab4:  
