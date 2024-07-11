@@ -195,7 +195,7 @@ with tab3:
     dp_rel = 0.01 + 0.2*( 1 - np.exp(-d_rel) )
     fig_dp_bottom, ax_dp_bottom = create_plot(figsize=(6, 5), dpi=200, x_range=(0,10), y_range=(0,1), x_label="$D/(2H)$", y_label="$dp_{bottom}/dp_{bed}$")
     ax_dp_bottom.plot(d_rel,dp_rel)
-    st.pytplot(fig_dp_bottom)
+    st.pyplot(fig_dp_bottom)
              
 with tab4:  
     col1, col2 = st.columns(2)
