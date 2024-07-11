@@ -299,7 +299,7 @@ class FluidizedBed():
           obj.set_U(U_cm)
           # mass flow conversion for fast fluidised beds
           Gs_hot = 1 # kg/m^2/s
-          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho/obj.U
+          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho*obj.U
           ms_hot = 1 # kg/h
           ms_cm = ms_hot * Gs_cm/Gs_hot * obj.A/self.A
           # comparison 
@@ -335,7 +335,7 @@ class FluidizedBed():
           obj.set_U(U_cm)
           # mass flow conversion for fast fluidised beds
           Gs_hot = 1 # kg/m^2/s
-          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho/obj.U
+          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho*obj.U
           ms_hot = 1 # kg/h
           ms_cm = ms_hot * Gs_cm/Gs_hot * obj.A/self.A
           # comparison 
@@ -368,7 +368,7 @@ class FluidizedBed():
           obj.set_U(U_cm)
           # mass flow conversion for fast fluidised beds
           Gs_hot = 1 # kg/m^2/s
-          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho/obj.U
+          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho*obj.U
           ms_hot = 1 # kg/h
           ms_cm = ms_hot * Gs_cm/Gs_hot * obj.A/self.A
           # comparison 
@@ -416,7 +416,7 @@ class FluidizedBed():
           obj.set_U(U_cm)
           # mass flow conversion for fast fluidised beds
           Gs_hot = 1 # kg/m^2/s
-          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho/obj.U
+          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho*obj.U
           ms_hot = 1 # kg/h
           ms_cm = ms_hot * Gs_cm/Gs_hot * obj.A/self.A
           # comparison 
@@ -445,7 +445,7 @@ class FluidizedBed():
           obj.set_Vn_dot(Vn_dot)
           # mass flow conversion for fast fluidised beds
           Gs_hot = 1 # kg/m^2/s
-          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho/obj.U
+          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho*obj.U
           ms_hot = 1 # kg/h
           ms_cm = ms_hot * Gs_cm/Gs_hot * obj.A/self.A
           # comparison 
