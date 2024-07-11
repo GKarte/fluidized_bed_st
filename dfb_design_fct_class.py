@@ -309,9 +309,9 @@ class FluidizedBed():
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
           # add mass flow conversions
-          df.loc[len(df.index)] = ['Gs', "kg/(m^2*s)", Gs_hot, Gs_cm] 
-          df.loc[len(df.index)] = ['ms_dot', "kg/h", ms_hot, ms_cm]
           # print(df)
+          df.loc['Gs'] = ["kg/(m^2*s)", Gs_hot, Gs_cm] 
+          df.loc['ms_dot'] = ["kg/h", ms_hot, ms_cm] 
           df["ratio"] = df["cold"]/df["hot"]          
           return obj, df
       
@@ -345,8 +345,8 @@ class FluidizedBed():
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
           # add mass flow conversions
-          df.loc[len(df.index)] = ['Gs', "kg/(m^2*s)", Gs_hot, Gs_cm] 
-          df.loc[len(df.index)] = ['ms_dot', "kg/h", ms_hot, ms_cm]
+          df.loc['Gs'] = ["kg/(m^2*s)", Gs_hot, Gs_cm] 
+          df.loc['ms_dot'] = ["kg/h", ms_hot, ms_cm] 
           df["ratio"] = df["cold"]/df["hot"]          
           return obj, df
       
@@ -378,8 +378,8 @@ class FluidizedBed():
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
           # add mass flow conversions
-          df.loc[len(df.index)] = ['Gs', "kg/(m^2*s)", Gs_hot, Gs_cm] 
-          df.loc[len(df.index)] = ['ms_dot', "kg/h", ms_hot, ms_cm]
+          df.loc['Gs'] = ["kg/(m^2*s)", Gs_hot, Gs_cm] 
+          df.loc['ms_dot'] = ["kg/h", ms_hot, ms_cm] 
           df["ratio"] = df["cold"]/df["hot"]            
           return obj, df
       
@@ -426,8 +426,8 @@ class FluidizedBed():
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
           # add mass flow conversions
-          df.loc[len(df.index)] = ['Gs', "kg/(m^2*s)", Gs_hot, Gs_cm] 
-          df.loc[len(df.index)] = ['ms_dot', "kg/h", ms_hot, ms_cm]
+          df.loc['Gs'] = ["kg/(m^2*s)", Gs_hot, Gs_cm] 
+          df.loc['ms_dot'] = ["kg/h", ms_hot, ms_cm] 
           df["ratio"] = df["cold"]/df["hot"]            
           return obj, df
       
@@ -455,8 +455,8 @@ class FluidizedBed():
           df["cold"] = df_cold[df_cold.columns[1]]
           df=df.drop(["h", "A_q"])
           # add mass flow conversions
-          df.loc[len(df.index)] = ['Gs', "kg/(m^2*s)", Gs_hot, Gs_cm] 
-          df.loc[len(df.index)] = ['ms_dot', "kg/h", ms_hot, ms_cm]
+          df.loc['Gs'] = ["kg/(m^2*s)", Gs_hot, Gs_cm] 
+          df.loc['ms_dot'] = ["kg/h", ms_hot, ms_cm] 
           df["ratio"] = df["cold"]/df["hot"]            
           return obj, df
       
@@ -511,7 +511,7 @@ def FluidBedProperties(bed, fluid):
     U_se =       Re_se*fluid.nu / bed.d_sv # U min. fluid.
     Re_c_av =    Ar**(19/30) / (0.85+0.85*Ar**(1/5))
     U_c_av =     Re_c_av*fluid.nu / bed.d_sv # U min. fluid.
-    DR =         (bed.rho-fluid.rho)/fluid.rho # density ratio
+    DR =         bed.rho/fluid.rho # density ratio
     d_p_star =   Ar**(1/3) # d_p_star
     U_t = TerminalVelocity(bed, fluid)
     return Ar, Re_mf, U_mf, Re_se, U_se, Re_c_av, U_c_av, DR, d_p_star, U_t
@@ -729,6 +729,7 @@ if __name__ == '__main__':
     OBJ.set_geometry(0.036)
     OBJ.set_U(15*OBJ.U_mf)
     print(OBJ.createTable())
+    print(OBJ.downscale_glicksmanSimpl(air20, 0.5)[1])
     
     GF_o = FluidizedBed(bed1, fluid)
     GF_o.set_geometry(0.08), GF_o.set_Vn_dot(24)
