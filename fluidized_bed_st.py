@@ -12,9 +12,6 @@ import pandas as pd
 import numpy as np
 from io import BytesIO
 from matplotlib import pyplot as plt
-# import scienceplots
-
-# plt.style.use(['science','vibrant', 'no-latex'])
 
 
 def create_plot(figsize=(6, 5), dpi=200, x_range=(0,1), y_range=(0,1), x_label="x", y_label="y", second_ax=False, y2_range=None, y2_label="y2", title=None, grid=True, grid_fine=True):
