@@ -190,6 +190,12 @@ with tab3:
              Pressure drop ratio (bottom/bed): {dp_bot/dp_bed*100:.4} %\n
              $\epsilon$ = {eps_bed:.4}
              """)
+    d_rel = np.arange(0, 5, 0.2)
+    # dp_rel = 0.01 + 0.2*( 1 - np.exp(-self.D/(2*h_bed)) )
+    dp_rel = 0.01 + 0.2*( 1 - np.exp(-d_rel) )
+    fig_dp_bottom, ax_dp_bottom = create_plot(figsize=(6, 5), dpi=200, x_range=(0,10), y_range=(0,1), x_label="$D/(2H)$", y_label="$dp_{bottom}/dp_{bed}$")
+    ax_dp_bottom.plot(d_rel,dp_rel)
+    st.pytplot(fig_dp_bottom)
              
 with tab4:  
     col1, col2 = st.columns(2)
@@ -242,7 +248,7 @@ with tab5:
             
 with tab6:
     if st.button("Create diagrams"):
-        st.write("Porosity as function of U/Umf:")
+        st.write("Porosity of fluidized bed ( m^3_fluid / (m^3_fluid+m^3_particles) ) as function of U/Umf (Source: Kaiser 2003, DOI:10.1016/S0009-2509(03)00233-1):")
         fig_eps, ax_eps = createEpsDiagram()
         st.pyplot(fig_eps)
         
