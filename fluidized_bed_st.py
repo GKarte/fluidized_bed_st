@@ -117,7 +117,7 @@ with st.sidebar:
     
     
     st.markdown("**Media:**")
-    subst = st.selectbox("Substance", ("Water", "Air", "CO2", "product gas (approx.)", "manual"))
+    subst = st.selectbox("Substance", ("Water", "Air", "CO2", "N2", "product gas (approx.)", "manual"))
     if subst == "manual":
         pf = st.number_input(label="pressure / bar", value=1.01325, format="%0.5f") * 10**(5)
         Tf = st.number_input(label="temperature / °C", value=650.)
