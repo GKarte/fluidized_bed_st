@@ -44,12 +44,15 @@ def create_plot(figsize=(6, 5), dpi=200, x_range=(0,1), y_range=(0,1), x_label="
 def scaling(bed_cm, fluid_cm, criteria="Umf", ratio=2):
     fullGlicks = FB.downscale_glicksmanFull(fluid_cm)
     simpleGlicks = FB.downscale_glicksmanSimpl(fluid_cm, 1/ratio)
+    simpleGlicksLowRe = FB.downscale_glicksmanSimplLowRe(fluid_cm, 1/ratio, bed_cm.rho)
     used = FB.downscale_detU(fluid_cm, bed_cm, 1/ratio, criteria)
     
     df_cm = fullGlicks[1]
     df_cm.rename(columns = {'cold':'full Glicksman', 'ratio':'f. Gl. ratio'}, inplace = True)
     df_cm["simple Glicksman"] = simpleGlicks[1]["cold"]
     df_cm["s. Gl. ratio"] = simpleGlicks[1]["ratio"]
+    df_cm["simple Glicksman (low Re)"] = simpleGlicksLowRe[1]["cold"]
+    df_cm["s. Gl. ratio (low Re)"] = simpleGlicksLowRe[1]["ratio"]
     df_cm["used"] = used[1]["cold"]
     df_cm["used ratio"] = used[1]["ratio"]
     
@@ -57,6 +60,7 @@ def scaling(bed_cm, fluid_cm, criteria="Umf", ratio=2):
     FB.grace(ax_cm, "Hot", "o", "red")
     fullGlicks[0].grace(ax_cm, "full Glicksman", ".", "blue")
     simpleGlicks[0].grace(ax_cm, "simple Glicksman", "x", "green")
+    simpleGlicksLowRe[0].grace(ax_cm, "simple Glicksman (low Re)", "^", "orange")
     used[0].grace(ax_cm, "used", "*", "magenta")
     ax_cm.legend(loc="upper right")
     
@@ -226,8 +230,8 @@ with tab4:
     bed_cm = BedMaterial(d_p=dp_cm, rho=rho_s_cm, Phi=Phi_cm)
     if st.button("Scale"):
         df_cm, fig_cm = scaling(bed_cm, fluid_cm, criteria, ratio)
-        style_dict2 = {"hot":"{:.2e}", "full Glicksman":"{:.2e}", "simple Glicksman":"{:.2e}", "used":"{:.2e}",
-                       "f. Gl. ratio":"{:.2f}", "s. Gl. ratio":"{:.2f}", "used ratio":"{:.2f}"}
+        style_dict2 = {"hot":"{:.2e}", "full Glicksman":"{:.2e}", "simple Glicksman":"{:.2e}", "simple Glicksman (low Re)":"{:.2e}", "used":"{:.2e}",
+                       "f. Gl. ratio":"{:.2f}", "s. Gl. ratio":"{:.2f}", "s. Gl. ratio (low Re)":"{:.2f}", "used ratio":"{:.2f}"}
         st.dataframe(df_cm.style.format(style_dict2))
         
         # download button

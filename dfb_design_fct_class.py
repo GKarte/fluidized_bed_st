@@ -315,6 +315,41 @@ class FluidizedBed():
           df["ratio"] = df["cold"]/df["hot"]          
           return obj, df
       
+      def downscale_glicksmanSimplLowRe(self, fluid_cm, ratio, rho_p_cm):
+          """
+          CFM scaling based on Fr_D, U/U_mf (simplified Glicksman rule for low Re-numbers):
+              d_p_cm, U_cm, D_cm = f(fluid_cm, geom. ratio, rho_p_cm)
+              point in Grace != const.
+              rho_p usually not changeable
+          """
+          h_cm = self.h*ratio
+          D_cm = self.D*ratio
+          param = (fluid_cm.nu, fluid_cm.rho, self.U_to_Umf, self.Fr_D, D_cm, rho_p_cm)
+          x0 =    [self.Ar, self.Re_mf, self.U_mf, self.U, self.bed.d_sv]        
+          Ar_cm, Re_mf_cm, U_mf_cm, U_cm, d_sv_cm = fsolve(sys_glicksmanSimpl, x0, args=param)          
+          # define CFM object
+          bed_cm = BedMaterial(d_p=d_sv_cm/self.bed.Phi, rho=rho_p_cm, Phi=self.bed.Phi)
+          obj = self.__class__(bed_cm,fluid_cm)
+          obj.set_geometry(D_cm, h_cm)
+          obj.set_U(U_cm)
+          # mass flow conversion for fast fluidised beds
+          Gs_hot = 1 # kg/m^2/s
+          Gs_cm = Gs_hot/self.bed.rho/self.U * obj.bed.rho*obj.U
+          ms_hot = 1 # kg/h
+          ms_cm = ms_hot * Gs_cm/Gs_hot * obj.A/self.A
+          # comparison 
+          df = self.createTable()
+          df.rename(columns = {df.columns[1]:'hot'}, inplace = True)
+          df_cold = obj.createTable()
+          df["cold"] = df_cold[df_cold.columns[1]]
+          df=df.drop(["h", "A_q"])
+          # add mass flow conversions
+          # print(df)
+          df.loc['Gs'] = ["kg/(m^2*s)", Gs_hot, Gs_cm] 
+          df.loc['ms_dot'] = ["kg/h", ms_hot, ms_cm] 
+          df["ratio"] = df["cold"]/df["hot"]          
+          return obj, df
+      
       def downscale_glicksmanFull(self, fluid_cm):
           """
           CFM scaling based on Fr_p, Ar, density ratio, D/d_sv=const. (full Glicksman rule):
@@ -388,7 +423,6 @@ class FluidizedBed():
           CFM scaling based on param=const.
               d_p_cm, U_cm, D_cm = f(fluid_cm, rho_p_cm, geom. ratio)
               Fr_D, density ratio != const. (violation of Glicksman)
-              similar to Marx Dissertation
           """
           h_cm = self.h*ratio
           D_cm = self.D*ratio
