@@ -81,9 +81,86 @@ def createEpsDiagram():
     ax.plot(U_ar/FB_dummy.U_mf, eps_list, label="$\epsilon$")
     ax.legend()
     return fig, ax
-        
-    
 
+def export_dfb_design_settings(df_beds, df_fluids, df_zones):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine = 'xlsxwriter')
+    df_zones.to_excel(writer, sheet_name="FB_zones", float_format="%.5f", startrow=0, index=False)
+    df_beds.to_excel(writer, sheet_name="bed_materials", float_format="%.5f", startrow=0, index=False)
+    df_fluids.to_excel(writer, sheet_name="fluids", float_format="%.5f", startrow=0, index=False)
+    writer.close()
+    return output.getvalue()
+
+
+def import_dfb_design_settings(df_beds, df_fluids, df_zones):
+    pass
+
+def calculate_dfb_design(df_beds, df_fluids, df_zones):
+    fig, ax = createGrace()
+    FB_zones = {}
+    for ind in df_zones.index:
+        zone = df_zones.loc[ind]
+        name = df_zones.loc[ind, "name"]
+        bed_name = df_zones.loc[ind, "bed material"]
+        fluid_name = df_zones.loc[ind, "fluid"]
+        bed = df_beds.loc[df_beds['name'] == bed_name]
+        fluid = df_fluids.loc[df_fluids['name'] == fluid_name]
+        bed_zone = BedMaterial(d_p=float(bed["d_sv / 10^-6m"])/10**6, rho=float(bed["density / kg/m^3"]), Phi=1)
+        if str(fluid_name) in known_fluids:
+            fluid_zone = FluidState(subst=fluid_name, T=float(zone["T / °C"]) , p=float(zone["p / bar"])*10**5)
+        else:
+            fluid_zone = FluidState("Water", T=float(zone["T / °C"]) , p=float(zone["p / bar"])*10**5)
+            fluid_zone.subst = fluid_name
+            fluid_zone.rho = float(fluid["density / kg/m^3"])
+            fluid_zone.nu = float(fluid["kin. viscosity / mm^2/s"])/10**6
+            fluid_zone.mu = fluid_zone.nu*fluid_zone.rho
+        if zone["shape"] == "rectangular":
+            A_zone = zone["W / mm"] * zone["L / mm"] / 10**6
+        else:
+            A_zone = zone["D / mm"]**2*np.pi/4 / 10**6
+            
+        FB_zone = def_FB_zone(bed_zone, fluid_zone, A=A_zone)
+        
+        if zone["Fluid. parameter"] == "U_to_Umf / -":
+            FB_zone.set_U(float(zone["Fluid. value"])*FB_zone.U_mf)
+        elif zone["Fluid. parameter"] == "U_to_Ut / -":
+            FB_zone.set_U(float(zone["Fluid. value"])*FB_zone.U_t)
+        elif zone["Fluid. parameter"] == "U_to_Use / -":
+            FB_zone.set_U(float(zone["Fluid. value"])*FB_zone.U_se)
+        elif zone["Fluid. parameter"] == "U_to_Uc / -":
+            FB_zone.set_U(float(zone["Fluid. value"])*FB_zone.U_c_av)
+        elif zone["Fluid. parameter"] == "U / (m/s)":
+            FB_zone.set_U(float(zone["Fluid. value"]))
+        elif zone["Fluid. parameter"] == "V_dot / (m^3/h)":
+            FB_zone.set_V_dot(float(zone["Fluid. value"]))
+        elif zone["Fluid. parameter"] == "Vn_dot / (Nm^3/h)":
+            FB_zone.set_Vn_dot(float(zone["Fluid. value"]))
+        
+        FB_zones[name] = FB_zone
+        
+        FB_zone.grace(ax, name, "o", "blue")
+    
+    ax.legend()
+    st.pyplot(fig)   
+    for zone in FB_zones:
+        FB_zone = FB_zones[zone]
+        with st.expander(zone):
+            style_dict1 = {"FB":"{:.2e}"}
+            df_zone = FB_zone.createTable()
+            st.table(df_zone.style.format(style_dict1))
+    with st.expander("References"):
+        st.write('''
+            Diagram taken from: Schmid, J. C. (2014). Development of a novel dual fluidized bed gasification system for increased fuel flexibility [Dissertation, Technische Universität Wien]. reposiTUm. https://doi.org/10.34726/hss.2014.25397
+            ''')
+
+def export_dfb_design_results(df_beds, df_fluids, df_zones):
+    pass
+
+def def_FB_zone(bed, fluid, A):
+    FB_zone = FluidizedBed(bed, fluid)
+    FB_zone.set_geometry(A=A)
+    return FB_zone
+    
 def initialize_FB(bed, fluid, geom_val, OP_val):
     FB = FluidizedBed(bed, fluid)
     if st.session_state.geom == "D / mm":
@@ -265,29 +342,135 @@ with tab6:
         st.pyplot(fig_eps)
         
 with tab7:
-    df = pd.DataFrame(
+    known_fluids = ["Air", "H2O", "CO2"]
+    fluid_parameters = ["U_to_Umf / -", "U_to_Ut / -", "U_to_Use / -", "U_to_Uc / -",
+                        "U / (m/s)", "V_dot / (m^3/h)", "Vn_dot / (Nm^3/h)", "m_dot / (kg/h)"]
+
+    design_settings_form = st.form("Design settings")
+    design_settings_form.header("Settings")
+    design_settings_form.markdown("**Bed materials**")
+    placeholder_beds = design_settings_form.empty()
+    design_settings_form.markdown("**Fluids**")
+    design_settings_form.markdown(f"Known fluids: {known_fluids}")
+    design_settings_form.markdown("Additional fluids:")
+    placeholder_fluids = design_settings_form.empty()
+    design_settings_form.markdown("**Reactor zones**")
+    placeholder_zones = design_settings_form.empty()
+    
+    df_beds = pd.DataFrame(
     [
-       {"command": "st.selectbox", "rating": 1, "is_widget": True},
-       {"command": "st.balloons", "rating": 5, "is_widget": False},
-       {"command": "st.time_input", "rating": 3, "is_widget": True},
-   ]
+       {"name": "bed_gr", "density / kg/m^3": 2800, "d_sv / 10^-6m": 300},
+       {"name": "bed_cr", "density / kg/m^3": 2800, "d_sv / 10^-6m": 300},
+    ]
     )
-    edited_df = st.data_editor(df,
-                               column_config={
-                                "category": st.column_config.SelectboxColumn(
-                                    "command",
-                                    help="The category of the app",
-                                    width="medium",
-                                    options=[
-                                        "CO2",
-                                        "H2O",
-                                        "N2",
-                                    ],
-                                    required=True,
-                                )
-                                },
+    style_dict2 = {"density / kg/m^3":"{:.2e}"}
+    
+    df_beds.style.format(precision=2, thousands="", decimal=".")
+
+    
+    edited_df_beds = placeholder_beds.data_editor(df_beds,
                                num_rows="dynamic")
     
+    df_fluids = pd.DataFrame(
+    [
+       {"name": "my personal fluid", "density / kg/m^3": 1.2, "kin. viscosity / mm^2/s": 12.0},
+    ]
+    )
+    
+    df_fluids.style.format(precision=2, thousands="", decimal=".")
+
+
+    edited_df_fluids = placeholder_fluids.data_editor(df_fluids,
+                               num_rows="dynamic")
+    
+    
+
+    try:
+        df_zones = pd.DataFrame(
+        [
+         {"name": "GR inlet",
+          "bed material": edited_df_beds.iloc[0, 0],
+          "fluid": known_fluids[0],
+          "T / °C": 400,
+          "p / bar": 1.01325,
+          "shape": "circular",
+          "D / mm": 80,
+          "L / mm": 150,
+          "W / mm": 100,
+          "Fluid. parameter": fluid_parameters[0],
+          "Fluid. value": 8},
+         {"name": "GR BFB",
+          "bed material": edited_df_beds.iloc[0, 0],
+          "fluid": known_fluids[0],
+          "T / °C": 400,
+          "p / bar": 1.01325,
+          "shape": "circular",
+          "D / mm": 80,
+          "L / mm": 150,
+          "W / mm": 100,
+          "Fluid. parameter": fluid_parameters[0],
+          "Fluid. value": 10},
+        ]
+        )
+        
+        df_zones.style.format(precision=2, thousands="", decimal=".")        
+
+        
+        edited_df_zones = placeholder_zones.data_editor(df_zones,
+                                   column_config={
+                                       "bed material": st.column_config.SelectboxColumn(required=True,
+                                        options=list(edited_df_beds["name"])),
+                                       "fluid": st.column_config.SelectboxColumn(required=True,
+                                        options=known_fluids+list(edited_df_fluids["name"])),
+                                       "shape": st.column_config.SelectboxColumn(required=True,
+                                        options=["circular","rectangular"]),
+                                       "Fluid. parameter": st.column_config.SelectboxColumn(required=True,
+                                        options=fluid_parameters)
+                                       },
+                                   num_rows="dynamic")
+    except:
+        design_settings_form.markdown("Bed materials table and fluids table each must contain minimum one entry!")
+            
+    design_settings_ready = design_settings_form.form_submit_button("Calculate")
+    
+    col1_tab7, col2_tab7 = st.columns(2)
+    with col1_tab7:
+        st.download_button(
+            label="Export settings",
+            data=export_dfb_design_settings(edited_df_beds, edited_df_fluids, edited_df_zones),
+            file_name= f'dfb_design_settings_exp_{gf.str_date_time()}.xlsx'
+            )
+    with col2_tab7:
+        import_xlsx = st.file_uploader("Import settings (.xlsx)")
+        if import_xlsx is not None:
+            df_beds = pd.read_excel(import_xlsx, sheet_name="bed_materials")
+            edited_df_beds = placeholder_beds.data_editor(df_beds,
+                                       num_rows="dynamic")
+            df_zones = pd.read_excel(import_xlsx, sheet_name="FB_zones")
+            edited_df_zones = placeholder_zones.data_editor(df_zones,
+                                       column_config={
+                                           "bed material": st.column_config.SelectboxColumn(required=True,
+                                            options=list(edited_df_beds["name"])),
+                                           "fluid": st.column_config.SelectboxColumn(required=True,
+                                            options=known_fluids+list(edited_df_fluids["name"])),
+                                           "shape": st.column_config.SelectboxColumn(required=True,
+                                            options=["circular","rectangular"]),
+                                           "Fluid. parameter": st.column_config.SelectboxColumn(required=True,
+                                            options=fluid_parameters)
+                                           },
+                                       num_rows="dynamic")
+            
+    
+    if design_settings_ready:
+        st.markdown("**Result:**")
+        calculate_dfb_design(edited_df_beds, edited_df_fluids, edited_df_zones)
+        if st.button("Export results"):
+            export_dfb_design_results()
+        
+
+        
+    
+
     
         
 
