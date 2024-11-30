@@ -158,7 +158,7 @@ bed = BedMaterial(d_p=dp, rho=rho_s, Phi=Phi)
 FB = initialize_FB(bed, fluid, geom_val, OP_val)
 
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Grace", "Summary", "Pressure drop", "Scaling", "Particle boundaries", "Diagrams"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["Grace", "Summary", "Pressure drop", "Scaling", "Particle boundaries", "Diagrams", "DFB design"])
 
 with tab1:
     if st.button("Create Grace diagram"):
@@ -263,6 +263,17 @@ with tab6:
         st.write("Porosity of fluidized bed ( m^3_fluid / (m^3_fluid+m^3_particles) ) as function of U/Umf (Source: Kaiser 2003, DOI:10.1016/S0009-2509(03)00233-1):")
         fig_eps, ax_eps = createEpsDiagram()
         st.pyplot(fig_eps)
+        
+with tab7:
+    df = pd.DataFrame(
+    [
+       {"command": "st.selectbox", "rating": 4, "is_widget": True},
+       {"command": "st.balloons", "rating": 5, "is_widget": False},
+       {"command": "st.time_input", "rating": 3, "is_widget": True},
+   ]
+    )
+    edited_df = st.data_editor(df, num_rows="dynamic")
+    
         
 
         
