@@ -267,12 +267,26 @@ with tab6:
 with tab7:
     df = pd.DataFrame(
     [
-       {"command": "st.selectbox", "rating": ["1", "2"], "is_widget": True},
+       {"command": "st.selectbox", "rating": 1, "is_widget": True},
        {"command": "st.balloons", "rating": 5, "is_widget": False},
        {"command": "st.time_input", "rating": 3, "is_widget": True},
    ]
     )
-    edited_df = st.data_editor(df, num_rows="dynamic")
+    edited_df = st.data_editor(df,
+                               column_config={
+                                "category": st.column_config.SelectboxColumn(
+                                    "command",
+                                    help="The category of the app",
+                                    width="medium",
+                                    options=[
+                                        "CO2",
+                                        "H2O",
+                                        "N2",
+                                    ],
+                                    required=True,
+                                )
+                                },
+                               num_rows="dynamic")
     
     
         
