@@ -274,6 +274,7 @@ with tab7:
     )
     edited_df = st.data_editor(df, num_rows="dynamic")
     
+    
         
 
         
