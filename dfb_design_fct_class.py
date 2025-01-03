@@ -5,6 +5,7 @@ Created on Mon Apr 17 15:23:42 2023
 @author: Gregor Karte
 """
 
+import thermo
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -55,9 +56,9 @@ class BedMaterial:
     
 @dataclass
 class FluidState:
-    subst: str
-    T: float
-    p: float
+    subst: str|dict = None
+    T: float = None
+    p: float = None
     rho: float = None
     mu: float = None
     nu: float = None
@@ -67,10 +68,19 @@ class FluidState:
     # cp: float = None
     
     def __post_init__(self):
-        if self.rho==None:
-            self.rho = CP.PropsSI("D", "P", self.p, "T", self.T+273.15, self.subst)
-            self.mu = CP.PropsSI("V", "P", self.p, "T", self.T+273.15, self.subst)
+        if type(self.subst) == dict:
+            comp = list(self.subst.keys())
+            zs = np.array(list(self.subst.values()))
+            zs = zs/sum(zs)
+            gas_mixture = thermo.Mixture(IDs=comp, zs=zs, T=self.T+273.15, P=self.p)
+            self.mu = gas_mixture.mu
+            self.rho = gas_mixture.rho
             self.nu = self.mu/self.rho
+        else:
+            if self.rho==None:
+                self.rho = CP.PropsSI("D", "P", self.p, "T", self.T+273.15, self.subst)
+                self.mu = CP.PropsSI("V", "P", self.p, "T", self.T+273.15, self.subst)
+                self.nu = self.mu/self.rho
             # self.M = CP.PropsSI("M", "P", self.p, "T", self.T+273.15, self.subst)
             # self.lam = CP.PropsSI("L", "P", self.p, "T", self.T+273.15, self.subst)
             # self.Pr = CP.PropsSI("PRANDTL", "P", self.p, "T", self.T+273.15, self.subst)
@@ -89,7 +99,10 @@ class FluidState:
         # M = self.M*K
         return self.__class__(self.subst,self.T,self.p,rho,mu,nu)
     
+
+
     
+
 def gas_mix(fluids, mol_fracts):
     M_mix = sum([fl.M*mol_fracts[ind] for ind, fl in enumerate(fluids)])
     mass_fracts = np.array([fl.M*mol_fracts[ind] for ind, fl in enumerate(fluids)])/M_mix
@@ -570,10 +583,10 @@ def TerminalVelocity(bed, fluid):
         param_trans = (bed.d_sv, fluid.nu, bed.rho, fluid.rho)
         # x0 = [(Re_lam+Re_turb)/2, 8, 2]
         x0 = [Re_t_guess, C_w_guess, U_t_guess]
-        print(x0)
+        # print(x0)
         Re_trans, C_w_trans, U_trans = fsolve(sys_U_t_trans, x0, args=param_trans)
         U_t = U_trans
-        print(Re_trans,C_w_trans, U_trans)
+        # print(Re_trans,C_w_trans, U_trans)
     return U_t
 
 def sys_U_t_trans(x, *parameter):
@@ -785,6 +798,20 @@ if __name__ == '__main__':
     # print(test)
     # rho_test, mu_test, nu_test = pg_prop_T(965)
     # print(rho_test, mu_test, nu_test)
+    
+    #test gas mixture
+    mixture_dict = dict([('N2', 0.0),
+                        ('CH4', 0.0),
+                        ('CO2', 0.0),
+                        ('CO', 0.0),
+                        ('H2O', 0.2),
+                        ('C2H4', 0.0),
+                        ('C2H6', 0.0),
+                        ('H2', 0.0)                        
+                ])
+    fluid_mixture = FluidState(mixture_dict, 965, 1.01325*10**5)
+    OBJ = FluidizedBed(bed1, fluid_mixture)
+    
     
     # test eps: Hoeltl Diss. S. 53
     bed_eps = BedMaterial(300*10**(-6), 2700, 0.9)
