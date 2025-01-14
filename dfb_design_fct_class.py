@@ -56,7 +56,7 @@ class BedMaterial:
     
 @dataclass
 class FluidState:
-    subst: str|dict = None
+    subst: str = None
     T: float = None
     p: float = None
     rho: float = None
