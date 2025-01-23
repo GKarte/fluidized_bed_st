@@ -22,7 +22,7 @@ R_gas = 8.314 # Gaskonstante
 # units
 units = {'d_p':'m', 'Phi':'-','d_sv':'m', 'rho_p':'kg/m^3', 'subst':'-', 'T':'°C', 'p':'Pa', 'rho_f':'kg/m^3', 'mu':'Pa*s',
          'D':"m", 'A':"m^2", 'h':"m", 'A_q':"m^2", 'U':"m/s", 'Vn_dot':"Nm^3/h", 'V_dot':"m^3/h", 'm_dot':"kg/h",
-         'U_to_Umf':"-", 'U_to_Uc':"-", 'U_to_Use':"-", 'Ar':"-", 'Re_p':"-", 'Fr_D':"-", 'Fr_p':"-", 'DR':"-",
+         'U_to_Umf':"-", 'U_to_Ut':"-", 'U_to_Uc':"-", 'U_to_Use':"-", 'Ar':"-", 'Re_p':"-", 'Fr_D':"-", 'Fr_p':"-", 'DR':"-",
          'U_star':"-", 'd_p_star':"-", 'eps_mf':"-", 'U_mf':"m/s", 'U_c_av':"m/s", 'U_t':"m/s", 'U_se':"m/s",
          'Re_mf':"-", 'Re_c_av':"-", 'Re_se':"-"        
         }
@@ -125,8 +125,8 @@ class FluidizedBed():
           self.fluid = fluid
           props = FluidBedProperties(bed, fluid)
           self.Ar, self.Re_mf, self.U_mf, self.Re_se, self.U_se, self.Re_c_av, self.U_c_av, self.DR, self.d_p_star, self.U_t = props
-          undefined = 15
-          self.U_to_Use, self.U_to_Uc, self.m_dot, self.Vn_dot, self.U_to_Umf, self.Re_p, self.U_star, self.A, self.Fr_D, self.Fr_p, self.U, self.D, self.h, self.A_q, self.V_dot = [None]*undefined
+          undefined = 16
+          self.U_to_Use, self.U_to_Ut, self.U_to_Uc, self.m_dot, self.Vn_dot, self.U_to_Umf, self.Re_p, self.U_star, self.A, self.Fr_D, self.Fr_p, self.U, self.D, self.h, self.A_q, self.V_dot = [None]*undefined
           self.est_eps_mf_ergun()
           
       def est_eps_mf_ergun(self):
@@ -149,6 +149,7 @@ class FluidizedBed():
           self.U_star =     None
           self.Re_p =       None
           self.U_to_Umf =   None
+          self.U_to_Ut =   None
           self.U_to_Uc =    None
           self.U_to_Use =   None
           
@@ -165,6 +166,7 @@ class FluidizedBed():
               self.Vn_dot =     V_to_Vn(self.V_dot, self.fluid.T, self.fluid.p)
               self.m_dot =      self.V_dot*self.fluid.rho
               self.U_to_Umf =   self.U/self.U_mf
+              self.U_to_Ut =   self.U/self.U_t
               self.U_to_Uc =   self.U/self.U_c_av
               self.U_to_Use =   self.U/self.U_se
           
@@ -181,6 +183,7 @@ class FluidizedBed():
               self.Re_p =       self.U*self.bed.d_sv / self.fluid.nu # Re
               self.U_star =     self.Re_p/self.d_p_star
               self.U_to_Umf =   self.U/self.U_mf
+              self.U_to_Ut =   self.U/self.U_t
               self.U_to_Uc =   self.U/self.U_c_av
               self.U_to_Use =   self.U/self.U_se
               
@@ -197,6 +200,7 @@ class FluidizedBed():
               self.Re_p =       self.U*self.bed.d_sv / self.fluid.nu # Re
               self.U_star =     self.Re_p/self.d_p_star
               self.U_to_Umf =   self.U/self.U_mf
+              self.U_to_Ut =   self.U/self.U_t
               self.U_to_Uc =   self.U/self.U_c_av
               self.U_to_Use =   self.U/self.U_se
           
@@ -778,6 +782,8 @@ if __name__ == '__main__':
     print(OBJ.createTable())
     print(OBJ.downscale_glicksmanSimpl(air20, 0.5)[1])
     
+    fig,ax = createGrace()
+    
     GF_o = FluidizedBed(bed1, fluid)
     GF_o.set_geometry(0.08), GF_o.set_Vn_dot(24)
     GF_o.downscale_glicksmanSimpl(air20, 0.5)
@@ -811,6 +817,7 @@ if __name__ == '__main__':
                 ])
     fluid_mixture = FluidState(mixture_dict, 965, 1.01325*10**5)
     OBJ = FluidizedBed(bed1, fluid_mixture)
+    print(fluid_mixture)
     
     
     # test eps: Hoeltl Diss. S. 53
