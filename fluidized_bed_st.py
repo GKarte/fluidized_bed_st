@@ -270,14 +270,14 @@ with st.sidebar:
         pf = st.number_input(label="pressure / bar", value=1.01325, format="%0.5f") * 10**(5)
         Tf = st.number_input(label="temperature / °C", value=650.)
         
-        H2O = st.number_input(label="y_H2O / -", value=0.45, format="%0.5f")
-        N2 = st.number_input(label="y_N2_dry / -", value=0.0, format="%0.5f")
-        H2 = st.number_input(label="y_H2_dry / -", value=0.42, format="%0.5f")
-        CH4 = st.number_input(label="y_CH4_dry / -", value=0.12, format="%0.5f")
-        CO2 = st.number_input(label="y_CO2_dry / -", value=0.21, format="%0.5f")
-        CO = st.number_input(label="y_CO_dry / -", value=0.22, format="%0.5f")
-        C2H4 = st.number_input(label="y_C2H4_dry / -", value=0.02, format="%0.5f")
-        C2H6 = st.number_input(label="y_C2H4_dry / -", value=0.01, format="%0.5f")
+        H2O = st.number_input(label="y_H2O / -", value=0.45, format="%0.3f")
+        N2 = st.number_input(label="y_N2_dry / -", value=0.0, format="%0.3f")
+        H2 = st.number_input(label="y_H2_dry / -", value=0.42, format="%0.3f")
+        CH4 = st.number_input(label="y_CH4_dry / -", value=0.12, format="%0.3f")
+        CO2 = st.number_input(label="y_CO2_dry / -", value=0.21, format="%0.3f")
+        CO = st.number_input(label="y_CO_dry / -", value=0.22, format="%0.3f")
+        C2H4 = st.number_input(label="y_C2H4_dry / -", value=0.02, format="%0.3f")
+        C2H6 = st.number_input(label="y_C2H6_dry / -", value=0.01, format="%0.3f")
         
         mixture_dict = dict([('N2', N2*(1-H2O)),
                             ('H2O', H2O),
@@ -325,6 +325,7 @@ with tab1:
             ''')
 
 with tab2:
+    st.write(f"Gas medium: {fluid.subst}")
     style_dict1 = {"FB":"{:.2e}"}
     df = FB.createTable()
     st.table(df.style.format(style_dict1))

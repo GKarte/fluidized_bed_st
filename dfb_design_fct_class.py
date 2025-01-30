@@ -20,7 +20,7 @@ g = 9.806 # gravitational acceleration
 sigma_boltz = 5.67*10**(-8) # Stefan-Boltzmann Konstante
 R_gas = 8.314 # Gaskonstante
 # units
-units = {'d_p':'m', 'Phi':'-','d_sv':'m', 'rho_p':'kg/m^3', 'subst':'-', 'T':'°C', 'p':'Pa', 'rho_f':'kg/m^3', 'mu':'Pa*s',
+units = {'d_p':'m', 'Phi':'-','d_sv':'m', 'rho_p':'kg/m^3', 'subst':'-', 'T':'°C', 'p':'Pa', 'rho_f':'kg/m^3', 'mu_f':'Pa*s', 'nu_f':'m^2/s',
          'D':"m", 'A':"m^2", 'h':"m", 'A_q':"m^2", 'U':"m/s", 'Vn_dot':"Nm^3/h", 'V_dot':"m^3/h", 'm_dot':"kg/h",
          'U_to_Umf':"-", 'U_to_Ut':"-", 'U_to_Uc':"-", 'U_to_Use':"-", 'Ar':"-", 'Re_p':"-", 'Fr_D':"-", 'Fr_p':"-", 'DR':"-",
          'U_star':"-", 'd_p_star':"-", 'eps_mf':"-", 'U_mf':"m/s", 'U_c_av':"m/s", 'U_t':"m/s", 'U_se':"m/s",
@@ -519,6 +519,8 @@ class FluidizedBed():
           attr.update(vars(self.fluid))
           attr["rho_p"] = self.bed.rho
           attr["rho_f"] = self.fluid.rho
+          attr["mu_f"] = self.fluid.mu
+          attr["nu_f"] = self.fluid.nu
           df = pd.DataFrame(columns=["unit","FB"], index=units.keys())
           df["unit"] = df_units 
           for key in units.keys():
