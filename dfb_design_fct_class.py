@@ -13,6 +13,7 @@ import CoolProp.CoolProp as CP # he1 = CP.PropsSI("H", "P", p, "T", data["Te1"][
 from CoolProp.HumidAirProp import HAPropsSI
 from dataclasses import dataclass
 from scipy.optimize import fsolve, minimize_scalar
+import additional_functions as af
 # from CoolProp.HumidAirProp import HAPropsSI
 
 # constants
@@ -68,14 +69,8 @@ class FluidState:
     # cp: float = None
     
     def __post_init__(self):
-        if type(self.subst) == dict:
-            comp = list(self.subst.keys())
-            zs = np.array(list(self.subst.values()))
-            zs = zs/sum(zs)
-            gas_mixture = thermo.Mixture(IDs=comp, zs=zs, T=self.T+273.15, P=self.p)
-            self.mu = gas_mixture.mu
-            self.rho = gas_mixture.rho
-            self.nu = self.mu/self.rho
+        if type(self.subst) == dict:            
+            self.mu, self.rho, self.nu, _, _, _ = af.calc_gas_mixture_props(subst_dict=self.subst, T=self.T+273.15, p=self.p)
         else:
             if self.rho==None:
                 self.rho = CP.PropsSI("D", "P", self.p, "T", self.T+273.15, self.subst)
@@ -809,15 +804,15 @@ if __name__ == '__main__':
     
     #test gas mixture
     mixture_dict = dict([('N2', 0.0),
-                        ('CH4', 0.0),
-                        ('CO2', 0.0),
+                        ('CH4', 0.1),
+                        ('CO2', 0.5),
                         ('CO', 0.0),
-                        ('H2O', 0.2),
+                        ('H2O', 0.5),
                         ('C2H4', 0.0),
                         ('C2H6', 0.0),
                         ('H2', 0.0)                        
                 ])
-    fluid_mixture = FluidState(mixture_dict, 965, 1.01325*10**5)
+    fluid_mixture = FluidState(mixture_dict, T=965, p=1.01325*10**5)
     OBJ = FluidizedBed(bed1, fluid_mixture)
     print(fluid_mixture)
     

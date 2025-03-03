@@ -280,11 +280,12 @@ with st.sidebar:
         C2H6 = st.number_input(label="y_C2H6_dry / -", value=0.01, format="%0.3f")
         
         mixture_dict = dict([('N2', N2*(1-H2O)),
+                            ('O2', 0),
                             ('H2O', H2O),
                             ('H2', H2*(1-H2O)),
                             ('CH4', CH4*(1-H2O)),
                             ('CO2', CO2*(1-H2O)),
-                            ('CO', CO*(1-H2O)),
+                            ('carbon monoxide', CO*(1-H2O)),
                             ('C2H4', C2H4*(1-H2O)),
                             ('C2H6', C2H6*(1-H2O)),
                             ])
