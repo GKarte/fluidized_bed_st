@@ -535,7 +535,7 @@ class FluidizedBed():
           return df
               
       def grace(self, ax, label="label", marker='*', color="red"):
-          ax.scatter(self.d_p_star, self.U_star,label=label, marker=marker, color=color)
+          ax.scatter(self.d_p_star, self.U_star,label=label, marker=marker, color=color, s=80, edgecolor='black')
       def grace_ccc(self, ax, k=0.771):
           d = np.log10(self.U_star)-k*np.log10(self.d_p_star)
           dp_ar = np.logspace(np.log10(3), np.log10(20), num=20, base=10)
@@ -656,8 +656,8 @@ def createGrace(title="no"):
     ax.set_yscale("log")
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
-    ax.set_xlabel('$d_p^* = Ar^{1/3}$')
-    ax.set_ylabel('$U^* = Re/Ar^{1/3}$')
+    ax.set_xlabel('$d_\mathrm{p}^* = Ar^{1/3}$', size=16)
+    ax.set_ylabel('$U^* = Re/Ar^{1/3}$', size=16)
     ax.set_zorder(2)
     ax.set_facecolor('none')
     ax_tw_x = ax.twinx()
@@ -667,6 +667,9 @@ def createGrace(title="no"):
     ax2.imshow(grace_png, extent=[xmin, xmax, ymin, ymax], aspect='auto')
     if title != "no":
         ax.set_title(title)
+        
+    ax.tick_params(labelsize=14)    
+    
     return fig, ax
 
 def Vn_to_V(Vn, T, p):
