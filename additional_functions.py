@@ -51,7 +51,7 @@ def read_ipse_txt(txt_file):
 
 def calc_gas_mixture_props(subst_dict, T, p):
     
-    visc_methods = dict([('nitrogen', "VDI_PPDS"),
+    visc_cond_methods = dict([('nitrogen', "VDI_PPDS"),
                         ('oxygen', "VDI_PPDS"),
                         ('methane', "VDI_PPDS"),
                         ('carbon dioxide', "VDI_PPDS"),
@@ -70,10 +70,10 @@ def calc_gas_mixture_props(subst_dict, T, p):
 
     visc_gases = []
     cond_gases = []
-    for ind,subs in enumerate(comp):
-        visc_gas = thermo.viscosity.ViscosityGas(CASRN=m.CASs[ind],method=visc_methods[m.names[ind]])
+    for ind in range(len(m.names)):
+        visc_gas = thermo.viscosity.ViscosityGas(CASRN=m.CASs[ind],method=visc_cond_methods[m.names[ind]])
         visc_gases.append(visc_gas)
-        cond_gas = thermo.thermal_conductivity.ThermalConductivityGas(CASRN=m.CASs[ind],method=visc_methods[m.names[ind]])
+        cond_gas = thermo.thermal_conductivity.ThermalConductivityGas(CASRN=m.CASs[ind],method=visc_cond_methods[m.names[ind]])
         cond_gases.append(cond_gas)
     
     m_visc_mixt_obj = thermo.viscosity.ViscosityGasMixture(MWs=m.MWs, molecular_diameters=m.molecular_diameters, Stockmayers=m.Stockmayers, CASs=m.CASs, ViscosityGases=visc_gases)

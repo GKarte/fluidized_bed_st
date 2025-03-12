@@ -809,7 +809,7 @@ if __name__ == '__main__':
     mixture_dict = dict([('N2', 0.0),
                         ('CH4', 0.1),
                         ('CO2', 0.5),
-                        ('CO', 0.0),
+                        ('carbon monoxide', 0.0),
                         ('H2O', 0.5),
                         ('C2H4', 0.0),
                         ('C2H6', 0.0),
