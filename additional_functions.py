@@ -56,7 +56,7 @@ def calc_gas_mixture_props(subst_dict, T, p):
                         ('methane', "VDI_PPDS"),
                         ('carbon dioxide', "VDI_PPDS"),
                         ('carbon monoxide', "VDI_PPDS"),
-                        ('water', "COOLPROP"),
+                        ('water', "REFPROP_FIT"),
                         ('ethene', "VDI_PPDS"),
                         ('ethane', "VDI_PPDS"),
                         ('hydrogen', "VDI_PPDS")                        
