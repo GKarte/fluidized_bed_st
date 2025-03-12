@@ -51,15 +51,26 @@ def read_ipse_txt(txt_file):
 
 def calc_gas_mixture_props(subst_dict, T, p):
     
-    visc_cond_methods = dict([('nitrogen', "VDI_PPDS"),
-                        ('oxygen', "VDI_PPDS"),
+    # visc_cond_methods = dict([('nitrogen', "VDI_PPDS"),
+    #                     ('oxygen', "VDI_PPDS"),
+    #                     ('methane', "VDI_PPDS"),
+    #                     ('carbon dioxide', "VDI_PPDS"),
+    #                     ('carbon monoxide', "VDI_PPDS"),
+    #                     ('water', "REFPROP_FIT"),
+    #                     ('ethene', "VDI_PPDS"),
+    #                     ('ethane', "VDI_PPDS"),
+    #                     ('hydrogen', "VDI_PPDS")                        
+    #                     ])
+    
+    visc_cond_methods = dict([('nitrogen', "COOLPROP"),
                         ('methane', "VDI_PPDS"),
-                        ('carbon dioxide', "VDI_PPDS"),
+                        ('carbon dioxide', "COOLPROP"),
                         ('carbon monoxide', "VDI_PPDS"),
-                        ('water', "REFPROP_FIT"),
+                        ('water', "COOLPROP"),
                         ('ethene', "VDI_PPDS"),
                         ('ethane', "VDI_PPDS"),
-                        ('hydrogen', "VDI_PPDS")                        
+                        ('hydrogen', "DIPPR_PERRY_8E"),
+                        ('oxygen', "COOLPROP")                        
                         ])
     
     
