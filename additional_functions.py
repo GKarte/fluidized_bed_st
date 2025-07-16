@@ -104,10 +104,10 @@ if __name__ == "__main__":
     
     # print(read_ipse_txt(r"C:\Users\Gregor\Downloads\PG_SER_20MW.txt"))
     
-    comp_dict = dict([  ('N2', 79),
-                        ('O2', 21),
+    comp_dict = dict([  ('N2', 0),
+                        ('O2', 0),
                         ('CH4', 0),
-                        ('CO2', 0.),
+                        ('CO2', 1.),
                         ('carbon monoxide', 0.0),
                         ('H2O', 0),
                         ('C2H4', 0.000),
@@ -115,4 +115,4 @@ if __name__ == "__main__":
                         ('H2', 0.000)
                         ])
     
-    print(calc_gas_mixture_props(comp_dict, T=700+273.15, p=1E5))
+    print(calc_gas_mixture_props(comp_dict, T=700+273.15, p=1.01325E5))

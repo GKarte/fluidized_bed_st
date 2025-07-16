@@ -656,8 +656,8 @@ def createGrace(title="no"):
     ax.set_yscale("log")
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
-    ax.set_xlabel('$d_\mathrm{p}^* = Ar^{1/3}$', size=16)
-    ax.set_ylabel('$U^* = Re/Ar^{1/3}$', size=16)
+    ax.set_xlabel('$d_\mathrm{p}^* = Ar^{1/3}$', size=18)
+    ax.set_ylabel('$U^* = Re/Ar^{1/3}$', size=18)
     ax.set_zorder(2)
     ax.set_facecolor('none')
     ax_tw_x = ax.twinx()
@@ -668,7 +668,7 @@ def createGrace(title="no"):
     if title != "no":
         ax.set_title(title)
         
-    ax.tick_params(labelsize=14)    
+    ax.tick_params(labelsize=16)    
     
     return fig, ax
 
@@ -773,8 +773,8 @@ def alpha_BFB(FB, T_surf, cp_bed, emiss_surf=0.9, media=None):
 
 
 if __name__ == '__main__':
-    bed1 = BedMaterial(100*10**(-6), 8900, 1)
-    fluid = FluidState("Water", 965, 1.01325*10**5)
+    bed1 = BedMaterial(250*10**(-6), 2900, 1)
+    fluid = FluidState("Water", 820, 1.01325*10**5)
     air20 = FluidState("Air", 20, 1.01325*10**5)
     OBJ = FluidizedBed(bed1, air20)
     OBJ.set_geometry(0.036)
@@ -869,6 +869,7 @@ if __name__ == '__main__':
     #     dp_ar.append((N,dp_blende(OBJ.fluid, V_doti, 0.0025, 0.009)))
     # print(dp_ar)
     # print(dp_bot)
+
     
     
     
