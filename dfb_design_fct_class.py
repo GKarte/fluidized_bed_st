@@ -5,7 +5,7 @@ Created on Mon Apr 17 15:23:42 2023
 @author: Gregor Karte
 """
 
-import thermo
+# import thermo
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -70,7 +70,8 @@ class FluidState:
     
     def __post_init__(self):
         if type(self.subst) == dict:            
-            self.mu, self.rho, self.nu, _, _, _ = af.calc_gas_mixture_props(subst_dict=self.subst, T=self.T+273.15, p=self.p)
+            # self.mu, self.rho, self.nu, _, _, _ = af.calc_gas_mixture_props(subst_dict=self.subst, T=self.T+273.15, p=self.p)
+            pass
         else:
             if self.rho==None:
                 self.rho = CP.PropsSI("D", "P", self.p, "T", self.T+273.15, self.subst)

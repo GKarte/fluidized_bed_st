@@ -251,7 +251,7 @@ with st.sidebar:
     
     
     st.markdown("**Media:**")
-    subst = st.selectbox("Substance", ("Water", "Air", "CO2", "N2", "gas mixture", "product gas (approx.)", "manual"))
+    subst = st.selectbox("Substance", ("Water", "Air", "CO2", "N2", "product gas (approx.)", "manual")) # "gas mixture"
     if subst == "manual":
         pf = st.number_input(label="pressure / bar", value=1.01325, format="%0.5f") * 10**(5)
         Tf = st.number_input(label="temperature / °C", value=650.)
@@ -266,30 +266,30 @@ with st.sidebar:
         fluid = FluidState("CO2", T=Tf , p=pf)
         fluid.subst = "pg"
         fluid.rho, fluid.mu, fluid.nu = pg_prop_T(Tf)
-    elif subst == "gas mixture":
-        pf = st.number_input(label="pressure / bar", value=1.01325, format="%0.5f") * 10**(5)
-        Tf = st.number_input(label="temperature / °C", value=650.)
+    # elif subst == "gas mixture":
+    #     pf = st.number_input(label="pressure / bar", value=1.01325, format="%0.5f") * 10**(5)
+    #     Tf = st.number_input(label="temperature / °C", value=650.)
         
-        H2O = st.number_input(label="y_H2O / -", value=0.45, format="%0.3f")
-        N2 = st.number_input(label="y_N2_dry / -", value=0.0, format="%0.3f")
-        H2 = st.number_input(label="y_H2_dry / -", value=0.42, format="%0.3f")
-        CH4 = st.number_input(label="y_CH4_dry / -", value=0.12, format="%0.3f")
-        CO2 = st.number_input(label="y_CO2_dry / -", value=0.21, format="%0.3f")
-        CO = st.number_input(label="y_CO_dry / -", value=0.22, format="%0.3f")
-        C2H4 = st.number_input(label="y_C2H4_dry / -", value=0.02, format="%0.3f")
-        C2H6 = st.number_input(label="y_C2H6_dry / -", value=0.01, format="%0.3f")
+    #     H2O = st.number_input(label="y_H2O / -", value=0.45, format="%0.3f")
+    #     N2 = st.number_input(label="y_N2_dry / -", value=0.0, format="%0.3f")
+    #     H2 = st.number_input(label="y_H2_dry / -", value=0.42, format="%0.3f")
+    #     CH4 = st.number_input(label="y_CH4_dry / -", value=0.12, format="%0.3f")
+    #     CO2 = st.number_input(label="y_CO2_dry / -", value=0.21, format="%0.3f")
+    #     CO = st.number_input(label="y_CO_dry / -", value=0.22, format="%0.3f")
+    #     C2H4 = st.number_input(label="y_C2H4_dry / -", value=0.02, format="%0.3f")
+    #     C2H6 = st.number_input(label="y_C2H6_dry / -", value=0.01, format="%0.3f")
         
-        mixture_dict = dict([('N2', N2*(1-H2O)),
-                            ('O2', 0),
-                            ('H2O', H2O),
-                            ('H2', H2*(1-H2O)),
-                            ('CH4', CH4*(1-H2O)),
-                            ('CO2', CO2*(1-H2O)),
-                            ('carbon monoxide', CO*(1-H2O)),
-                            ('C2H4', C2H4*(1-H2O)),
-                            ('C2H6', C2H6*(1-H2O)),
-                            ])
-        fluid = FluidState(mixture_dict, T=Tf , p=pf)
+    #     mixture_dict = dict([('N2', N2*(1-H2O)),
+    #                         ('O2', 0),
+    #                         ('H2O', H2O),
+    #                         ('H2', H2*(1-H2O)),
+    #                         ('CH4', CH4*(1-H2O)),
+    #                         ('CO2', CO2*(1-H2O)),
+    #                         ('carbon monoxide', CO*(1-H2O)),
+    #                         ('C2H4', C2H4*(1-H2O)),
+    #                         ('C2H6', C2H6*(1-H2O)),
+    #                         ])
+    #     fluid = FluidState(mixture_dict, T=Tf , p=pf)
     else:
         pf = st.number_input(label="pressure / bar", value=1.01325, format="%0.5f") * 10**(5)
         Tf = st.number_input(label="temperature / °C", value=650.)
