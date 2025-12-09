@@ -642,9 +642,11 @@ def sys_eps_mf_ergun(x, *parameter): # Kaiser 2003
     Re_mf, Ar, Phi = parameter
     K1 = 150*Re_mf / Ar
     K2 = (150*Re_mf+1.75*Re_mf**2) / Ar
+
+    return [eps_mf**3 + eps_mf*K1 - K2]
+
     # K1 = 150*Re_mf / Ar / Phi**2
     # K2 = (150*Re_mf+1.75*Re_mf**2*Phi) / Ar / Phi**2
-    return [eps_mf**3 + eps_mf*K1 - K2]
 
 def createGrace(title="no"):
     pct_name = 'grace_schmid.png'
