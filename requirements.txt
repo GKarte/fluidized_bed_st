@@ -1,6 +1,7 @@
-CoolProp==7.2.0
-matplotlib==3.7.0
-numpy==1.23.5
-pandas==1.5.3
+CoolProp==6.4.3.post1
+matplotlib==3.7.1
+numpy==1.24.4
+pandas==2.0.2
 scipy==1.10.0
 streamlit==1.40.2
+xlsxwriter==3.1.2
